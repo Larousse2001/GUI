@@ -37,8 +37,8 @@ public class WelcomePage extends Application {
         logoImageView.setPreserveRatio(true);
 
         // Welcome Text
-        Text welcomeText = new Text("Welcome to Sports App");
-        welcomeText.setFont(Font.font("Arial", FontWeight.BOLD, 30));
+        Text welcomeText = new Text("Welcome to Sporti'Z");
+        welcomeText.setFont(Font.font("Arial", FontWeight.BOLD, 50));
         welcomeText.setFill(Color.WHITE);
 
         // Description Text
