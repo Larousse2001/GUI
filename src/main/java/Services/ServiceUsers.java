@@ -16,6 +16,13 @@ public class ServiceUsers implements IService<Users> {
         createUser(userName, userEmail);
     }
 
+    public boolean verify(Users user) throws SQLException {
+        String userName = user.getUserNameDB();
+        String userEmail = user.getUserEmailDB();
+        boolean verif = checkIfUsernameExists(userName);
+        return verif;
+    }
+
     @Override
     public void delete(Users user) throws SQLException {
         String userName = user.getUserNameDB();
@@ -43,6 +50,12 @@ public class ServiceUsers implements IService<Users> {
 
     private static void createUser(String userName, String userEmail) {
         try (Connection con = DriverManager.getConnection(url, login, pwd)) {
+            // Check if username already exists
+            if (checkIfUsernameExists(userName)) {
+                System.out.println("Username already exists");
+                return;
+            }
+
             String insertQuery = "INSERT INTO Users (UserNameDB, UserEmailDB) VALUES (?, ?)";
             PreparedStatement pst = con.prepareStatement(insertQuery);
             pst.setString(1, userName);
@@ -56,6 +69,19 @@ public class ServiceUsers implements IService<Users> {
         } catch (SQLException e) {
             System.err.println("Error adding user: " + e.getMessage());
         }
+    }
+
+    private static boolean checkIfUsernameExists(String userName) throws SQLException {
+        try (Connection con = DriverManager.getConnection(url, login, pwd)) {
+            String query = "SELECT * FROM Users WHERE UserNameDB = ?";
+            PreparedStatement pst = con.prepareStatement(query);
+            pst.setString(1, userName);
+            ResultSet rs = pst.executeQuery();
+            return rs.next(); // If rs.next() is true, it means username exists
+        } catch (SQLException e) {
+            System.err.println("Error adding user: " + e.getMessage());
+        }
+        return false;
     }
 
     private static void deleteUser(String userName) {
